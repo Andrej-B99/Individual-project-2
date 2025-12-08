@@ -1,0 +1,493 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-color: #f8fafc;
+}
+
+/* Rating stars */
+.rating {
+    position: relative;
+    display: inline-block;
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.rating-box {
+    display: inline-block;
+    position: relative;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
+    white-space: nowrap;
+    transition: transform 0.25s ease;
+}
+
+.stars-empty {
+    color: #d3d3d3;
+}
+
+.stars-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #ffc107;
+    transition: width 0.25s ease;
+}
+
+.rating-box:hover .stars-fill,
+.rating-box:hover .stars-empty {
+    transform: scale(1.15);
+}
+
+.rating-box:hover .stars-fill {
+    color: #ffda44;
+}
+
+.rating-box:hover .stars-empty {
+    color: #bfbfbf;
+}
+
+/* Focus */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+
+
+/* Review block */
+.review-card {
+    border-radius: 12px;
+    background: #fff;
+    padding: 18px 22px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.review-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.review-avatar-initials {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #4f7cff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.review-user-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.review-username {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.review-date {
+    font-size: 12px;
+    color: gray;
+}
+
+.review-stars span {
+    font-size: 20px;
+}
+
+.review-actions .btn {
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 6px;
+}
+
+.review-comment {
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+/* Why section */
+.why-section {
+    background: #f8f9fb;
+    border-radius: 12px;
+}
+
+.why-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.why-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+/* Master cards */
+.master-card {
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    padding: 20px;
+    transition: .2s;
+    height: 100%;
+    text-align: center;
+}
+
+    .master-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 26px rgba(0,0,0,0.12);
+    }
+
+.master-avatar {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.initials-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: bold;
+    color: white;
+    background: #4f7cff;
+    margin: 0 auto 15px auto;
+}
+
+.master-price {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #4f7cff;
+    color: white;
+    border-radius: 30px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* Big profile avatar */
+.avatar-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    font-size: 58px;
+    font-weight: bold;
+    background: #4f7cff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    margin: 0 auto 15px auto;
+}
+
+.avatar-img-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    margin: 0 auto 15px auto;
+}
+
+/* Header */
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Footer */
+footer {
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+/* Register */
+.register-wrapper {
+    display: flex;
+    min-height: 80vh;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    padding: 20px;
+}
+
+.register-hero {
+    width: 45%;
+    padding: 40px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #4f8dff, #6dc7ff);
+    color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+    .register-hero h1 {
+        font-size: 38px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .register-hero p {
+        font-size: 18px;
+        opacity: 0.9;
+        max-width: 420px;
+    }
+
+.register-card {
+    width: 420px;
+    background: #fff;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+    .register-card h2 {
+        font-weight: 700;
+        text-align: center;
+    }
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.form-control {
+    height: 45px;
+    border-radius: 10px;
+}
+
+select.form-select {
+    height: 45px;
+    border-radius: 10px;
+}
+
+#registerSubmit {
+    height: 48px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+    .login-link a {
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+/* Login */
+.login-wrapper {
+    max-width: 420px;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.login-sub {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #666;
+}
+
+.input-group-text {
+    background-color: #f1f5ff;
+}
+
+.btn-login {
+    background: linear-gradient(90deg, #4b9cff, #3b7bff);
+    border: none;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+    .btn-login:hover {
+        opacity: 0.9;
+    }
+
+.extra-links a {
+    text-decoration: none;
+    font-size: 14px;
+}
+
+    .extra-links a:hover {
+        text-decoration: underline;
+    }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 320px;
+}
+
+.click-row {
+    cursor: pointer;
+}
+
+    .click-row:hover {
+        background-color: #f6f8ff !important;
+        box-shadow: none !important;
+    }
+
+.table-hover tbody tr:hover {
+    background-color: #f1f5ff !important;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+}
+
+td {
+    vertical-align: middle;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+}
+
+.modal-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+
+.attachment-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+}
+
+.attachment-modal-content {
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.stat-card {
+    border-radius: 14px;
+    background: #fff;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    border: 1px solid #f1f1f1;
+}
+
+.stat-title {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.stat-number {
+    font-size: 34px;
+    font-weight: 700;
+}

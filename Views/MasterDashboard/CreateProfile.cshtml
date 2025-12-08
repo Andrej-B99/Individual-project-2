@@ -1,0 +1,59 @@
+﻿@model MasterServicePlatform.Web.Models.Master
+@{
+    ViewData["Title"] = "Create Master Profile";
+}
+
+<h2 class="mb-3">Create Master Profile</h2>
+
+<form asp-action="CreateProfile" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Profession" class="form-label"></label>
+        <input asp-for="Profession" class="form-control" />
+        <span asp-validation-for="Profession" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ExperienceYears" class="form-label"></label>
+        <input asp-for="ExperienceYears" type="number" class="form-control" />
+        <span asp-validation-for="ExperienceYears" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PricePerHour" class="form-label"></label>
+        <input asp-for="PricePerHour" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="PricePerHour" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

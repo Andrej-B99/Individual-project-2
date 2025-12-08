@@ -1,0 +1,176 @@
+﻿@page
+@model MasterServicePlatform.Web.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Create an account";
+}
+
+
+
+<div class="register-wrapper">
+
+    <!-- LEFT SIDE (HERO / BANNER) -->
+    <div class="register-hero">
+        <h1>Create your account</h1>
+        <p>
+            Join MasterService and connect with trusted professionals — whether you’re a customer
+            looking for help or a master offering your skills.
+        </p>
+        <p><b>Fast • Secure • Verified</b></p>
+    </div>
+
+    <!-- RIGHT SIDE (FORM) -->
+    <div class="register-card">
+        <h2>Create an account</h2>
+        <p class="text-center text-muted mb-4">Register to continue</p>
+
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <!-- Passwords -->
+            <div class="mb-3">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3">
+                <label asp-for="Input.Role" class="form-label">Role</label>
+                <select asp-for="Input.Role" class="form-select" id="roleSelect">
+                    <option value="User">User</option>
+                    <option value="Master">Master</option>
+                </select>
+                <span asp-validation-for="Input.Role" class="text-danger"></span>
+            </div>
+
+            <!-- USER FIELDS -->
+            <div id="userFields" class="border rounded p-3 mb-3">
+                <h5 class="mb-3">User profile</h5>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.FirstName" class="form-label"></label>
+                        <input asp-for="Input.FirstName" class="form-control" />
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.LastName" class="form-label"></label>
+                        <input asp-for="Input.LastName" class="form-control" />
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.City" class="form-label"></label>
+                    <input asp-for="Input.City" class="form-control" />
+                    <span asp-validation-for="Input.City" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Phone" class="form-label"></label>
+                    <input asp-for="Input.Phone" class="form-control" />
+                    <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- MASTER FIELDS -->
+            <div id="masterFields" class="border rounded p-3 mb-3" style="display:none;">
+                <h5 class="mb-3">Master profile</h5>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.MasterFirstName" class="form-label"></label>
+                        <input asp-for="Input.MasterFirstName" class="form-control" />
+                        <span asp-validation-for="Input.MasterFirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.MasterLastName" class="form-label"></label>
+                        <input asp-for="Input.MasterLastName" class="form-control" />
+                        <span asp-validation-for="Input.MasterLastName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.MasterCity" class="form-label"></label>
+                    <input asp-for="Input.MasterCity" class="form-control" />
+                    <span asp-validation-for="Input.MasterCity" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Profession" class="form-label"></label>
+                    <input asp-for="Input.Profession" class="form-control" />
+                    <span asp-validation-for="Input.Profession" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.ExperienceYears" class="form-label"></label>
+                    <input asp-for="Input.ExperienceYears" class="form-control" type="number" min="0" />
+                    <span asp-validation-for="Input.ExperienceYears" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.PricePerHour" class="form-label"></label>
+                    <input asp-for="Input.PricePerHour" class="form-control" type="number" step="0.01" min="0" />
+                    <span asp-validation-for="Input.PricePerHour" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.MasterPhone" class="form-label"></label>
+                    <input asp-for="Input.MasterPhone" class="form-control" />
+                    <span asp-validation-for="Input.MasterPhone" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Description" class="form-label"></label>
+                    <textarea asp-for="Input.Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Input.Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button id="registerSubmit" type="submit" class="btn btn-primary w-100">
+                Create account
+            </button>
+
+            <div class="login-link">
+                Already have an account?
+                <a asp-area="Identity" asp-page="/Account/Login">Log in</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const roleSelect = document.getElementById('roleSelect');
+        const userFields = document.getElementById('userFields');
+        const masterFields = document.getElementById('masterFields');
+
+        function toggleBlocks() {
+            const role = roleSelect.value;
+            userFields.style.display = role === 'User' ? '' : 'none';
+            masterFields.style.display = role === 'Master' ? '' : 'none';
+        }
+
+        roleSelect.addEventListener('change', toggleBlocks);
+        toggleBlocks();
+    </script>
+}

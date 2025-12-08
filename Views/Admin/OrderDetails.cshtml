@@ -1,0 +1,136 @@
+﻿@model MasterServicePlatform.Web.Models.Order
+
+@{
+    Layout = "_AdminLayout";
+
+    var hasAttachment = !string.IsNullOrEmpty(Model.AttachmentPath);
+    var attachmentUrl = hasAttachment ? Url.Content(Model.AttachmentPath) : "";
+    var lower = hasAttachment ? attachmentUrl.ToLower() : "";
+    var isImage = hasAttachment && (
+        lower.EndsWith(".jpg") ||
+        lower.EndsWith(".jpeg") ||
+        lower.EndsWith(".png") ||
+        lower.EndsWith(".gif") ||
+        lower.EndsWith(".webp") ||
+        lower.EndsWith(".avif")
+    );
+}
+
+<h2 class="mt-4 mb-3 fw-bold">Order Details</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <h4 class="fw-bold mb-3">Order #@Model.Id</h4>
+
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <p>
+                    <strong>User:</strong>
+                    <a href="/Admin/UserDetails/@Model.UserId">
+                        @Model.User.FirstName @Model.User.LastName
+                    </a>
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status-badge status-@Model.Status.ToString().ToLower()">
+                        @Model.Status
+                    </span>
+                </p>
+
+                <p>
+                    <strong>Created:</strong>
+                    @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <p>
+                    <strong>Master:</strong>
+                    @if (Model.Master != null)
+                    {
+                        <a href="/Admin/MasterDetails/@Model.MasterId">
+                            @Model.Master.FirstName @Model.Master.LastName
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not assigned</span>
+                    }
+                </p>
+
+                <p>
+                    <strong>Budget:</strong>
+                    @(Model.Budget.HasValue
+                                        ? Model.Budget.Value.ToString("0.00") + " €"
+                                        : "—")
+                </p>
+
+                <p>
+                    <strong>Address:</strong> @Model.Address
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="fw-bold mt-4 mb-2">Attachment</h4>
+
+@if (hasAttachment)
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            @if (isImage)
+            {
+                <div class="mb-3 text-center">
+                    <img src="@attachmentUrl"
+                         alt="Attachment"
+                         class="img-fluid rounded border"
+                         style="max-height: 260px; cursor: zoom-in;"
+                         onclick="openAttachmentModal()" />
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-3">
+                    Attachment is not an image (file will be downloaded).
+                </p>
+            }
+
+            <a href="@attachmentUrl"
+               class="btn btn-outline-primary"
+               download>
+                <i class="bi bi-paperclip me-1"></i> Download Attachment
+            </a>
+        </div>
+    </div>
+
+    @if (isImage)
+    {
+        <div id="attachmentModal"
+             class="attachment-modal"
+             style="display:none;"
+             onclick="closeAttachmentModal()">
+            <div class="attachment-modal-content">
+                <img src="@attachmentUrl" alt="Attachment full" class="img-fluid rounded" />
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p class="text-muted">No attachment for this order.</p>
+}
+
+@section Scripts {
+    <script>
+        function openAttachmentModal() {
+            document.getElementById('attachmentModal').style.display = 'flex';
+        }
+        function closeAttachmentModal() {
+            document.getElementById('attachmentModal').style.display = 'none';
+        }
+    </script>
+}

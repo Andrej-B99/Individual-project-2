@@ -1,0 +1,228 @@
+﻿@model IEnumerable<MasterServicePlatform.Web.Models.Master>
+
+@{
+    ViewData["Title"] = "Find a Master";
+
+    string GetInitials(string first, string last)
+    {
+        if (string.IsNullOrWhiteSpace(first) || string.IsNullOrWhiteSpace(last))
+            return "?";
+        return $"{first[0]}{last[0]}".ToUpper();
+    }
+}
+
+
+
+
+<h2 class="mb-4 text-center">Find a Master</h2>
+
+<!-- MAIN SEARCH BAR -->
+<form method="get" asp-action="Index"
+      class="row g-2 mb-4 justify-content-center align-items-center">
+
+    <div class="col-sm-6 col-md-4">
+        <input type="text" name="search"
+               value="@Context.Request.Query["search"]"
+               class="form-control"
+               placeholder="Search by name or profession..." />
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+        <select name="profession" class="form-select">
+            <option value="">All professions</option>
+            @foreach (var p in ViewBag.Professions as List<string>)
+            {
+                <option value="@p" selected="@(p == Context.Request.Query["profession"])">@p</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+    </div>
+
+    <!-- FILTERS BUTTON -->
+    <div class="col-auto">
+        <button type="button"
+                class="btn btn-outline-dark"
+                data-bs-toggle="modal"
+                data-bs-target="#filtersModal">
+            <i class="bi bi-sliders"></i> Filters
+        </button>
+    </div>
+
+</form>
+
+
+
+<!-- RESULTS SECTION -->
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">No masters available yet.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="master-card">
+
+                    @if (!string.IsNullOrEmpty(item.AvatarPath))
+                    {
+                        <img src="@item.AvatarPath" class="master-avatar" />
+                    }
+                    else
+                    {
+                        <div class="initials-avatar">@GetInitials(item.FirstName, item.LastName)</div>
+                    }
+
+                    <h5 class="fw-bold">@item.FullName</h5>
+                    <p class="text-muted">@item.Profession</p>
+
+                    <div class="rating-stars mb-2">
+                        @if (item.AverageRating > 0)
+                        {
+                            var rating = item.AverageRating;
+                            var percent = rating / 5.0 * 100.0;
+
+                            <a href="/Public/Details/@item.Id" class="rating text-decoration-none">
+                                <div class="rating-box">
+                                    <span class="stars-empty">★★★★★</span>
+                                    <span class="stars-fill" style="width:@percent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">★★★★★</span>
+                                </div>
+                            </a>
+
+                            <span class="text-muted">(@rating.ToString("0.0"))</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No rating yet</span>
+                        }
+                    </div>
+
+
+                    <p class="text-truncate">@item.Description</p>
+
+                    <div class="master-price">@item.PricePerHour € / hour</div>
+
+                    <a asp-controller="Public" asp-action="Details" asp-route-id="@item.Id"
+                       class="btn btn-outline-primary w-100 mt-3">
+                        View details
+                    </a>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+
+<!-- Filter -->
+
+<form id="filtersForm" method="get" asp-action="Index"></form>
+
+<div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="filtersModalLabel">
+                    <i class="bi bi-sliders"></i> Advanced Filters
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <!-- CITY -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">City</label>
+                        <select name="city" form="filtersForm" class="form-select">
+                            <option value="">All cities</option>
+                            @foreach (var c in ViewBag.Cities as List<string>)
+                            {
+                                <option value="@c" selected="@(c == Context.Request.Query["city"])">@c</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- PRICE MIN -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Min price (€)</label>
+                        <input type="number" name="minPrice" form="filtersForm"
+                               class="form-control"
+                               value="@Context.Request.Query["minPrice"]" />
+                    </div>
+
+                    <!-- PRICE MAX -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Max price (€)</label>
+                        <input type="number" name="maxPrice" form="filtersForm"
+                               class="form-control"
+                               value="@Context.Request.Query["maxPrice"]" />
+                    </div>
+
+                    <!-- EXPERIENCE -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Experience</label>
+                        <select name="experience" form="filtersForm" class="form-select">
+                            <option value="">Any</option>
+                            <option value="1-3" selected="@(Context.Request.Query["experience"] == "1-3")">1–3 years</option>
+                            <option value="3-5" selected="@(Context.Request.Query["experience"] == "3-5")">3–5 years</option>
+                            <option value="5+" selected="@(Context.Request.Query["experience"] == "5+")">5+ years</option>
+                        </select>
+                    </div>
+
+                    <!-- RATING -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Minimum Rating</label>
+                        <select name="rating" form="filtersForm" class="form-select">
+                            <option value="">Any</option>
+                            <option value="4" selected="@(Context.Request.Query["rating"] == "4")">4+ stars</option>
+                            <option value="3" selected="@(Context.Request.Query["rating"] == "3")">3+ stars</option>
+                            <option value="2" selected="@(Context.Request.Query["rating"] == "2")">2+ stars</option>
+                        </select>
+                    </div>
+
+                    <!-- VERIFIED -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Verification</label>
+                        <select name="verified" form="filtersForm" class="form-select">
+                            <option value="">All</option>
+                            <option value="true" selected="@(Context.Request.Query["verified"] == "true")">Verified only</option>
+                            <option value="false" selected="@(Context.Request.Query["verified"] == "false")">Unverified only</option>
+                        </select>
+                    </div>
+
+                    <!-- SORTING -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Sort by</label>
+                        <select name="sort" form="filtersForm" class="form-select">
+                            <option value="">Default</option>
+                            <option value="rating" selected="@(Context.Request.Query["sort"] == "rating")">Rating</option>
+                            <option value="priceAsc" selected="@(Context.Request.Query["sort"] == "priceAsc")">Price: Low → High</option>
+                            <option value="priceDesc" selected="@(Context.Request.Query["sort"] == "priceDesc")">Price: High → Low</option>
+                            <option value="newest" selected="@(Context.Request.Query["sort"] == "newest")">Newest profiles</option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-outline-secondary">Clear All</a>
+
+                <button type="submit" form="filtersForm" class="btn btn-primary">
+                    Apply Filters
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

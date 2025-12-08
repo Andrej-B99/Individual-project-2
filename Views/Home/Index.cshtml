@@ -1,0 +1,252 @@
+﻿@model List<MasterServicePlatform.Web.Models.Master>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+@{
+    ViewData["Title"] = "Welcome to MasterService";
+    var masters = Model ?? new List<MasterServicePlatform.Web.Models.Master>();
+}
+
+
+
+<div class="container">
+
+    <!-- HERO SECTION -->
+    <section class="hero-section text-center mb-5">
+        <div class="hero-bg rounded-4 shadow p-5">
+            <h1 class="fw-bold display-5 mb-3 text-white">Find Trusted Masters for Any Home Service</h1>
+
+            <p class="text-white-50 mb-4">
+                Electricians, plumbers, repair experts — verified, reviewed and ready to help.
+            </p>
+
+            <div class="d-flex justify-content-center">
+                <form asp-controller="Public" asp-action="Index" method="get" class="search-box d-flex w-50">
+                    <input name="search" class="form-control form-control-lg rounded-start-pill"
+                           placeholder="Search for electrician, plumber, repair…">
+                    <button class="btn btn-primary btn-lg rounded-end-pill px-4">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            @{
+                ApplicationUser currentUser = null;
+                bool isMaster = false;
+                bool isAdmin = false;
+
+                if (SignInManager.IsSignedIn(User))
+                {
+                    currentUser = await UserManager.GetUserAsync(User);
+
+                    if (currentUser != null)
+                    {
+                        isMaster = currentUser.Role == UserRole.Master;
+                        isAdmin = currentUser.Role == UserRole.Admin;
+                    }
+                }
+            }
+            
+            
+
+            <div class="mt-4">
+
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <!-- If not authorized -->
+                    <a href="/Identity/Account/Register"
+                       class="btn btn-outline-light btn-lg rounded-pill px-4">
+                        <i class="bi bi-briefcase-fill"></i> Become a Master
+                    </a>
+                }
+                else if (isAdmin)
+                {
+                    <!-- For admin -->
+                }
+                else if (!isMaster)
+                {
+                    <!-- User - search for master -->
+                    <a asp-controller="Public" asp-action="Index"
+                       class="btn btn-outline-light btn-lg rounded-pill px-4">
+                        <i class="bi bi-search"></i> Find a Master
+                    </a>
+                }
+                else
+                {
+                    <!-- Master - to master profile -->
+                    <a href="/MasterProfile/Index"
+                       class="btn btn-primary btn-lg rounded-pill px-4">
+                        <i class="bi bi-tools"></i> Go to Master Dashboard
+                    </a>
+                }
+
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .hero-bg {
+            background: linear-gradient(135deg, #4e8df5, #5ec2ff);
+        }
+    </style>
+
+    <!-- WHY SECTION -->
+    <section class="why-section py-5">
+        <div class="container">
+
+            <h3 class="text-center mb-4 fw-bold">Why Choose MasterService?</h3>
+
+            <div class="row g-4 mb-5">
+
+                <div class="col-md-4">
+                    <div class="why-card text-center">
+                        <div class="why-icon">⭐</div>
+                        <h5 class="fw-bold">Verified Professionals</h5>
+                        <p>All specialists go through manual verification and quality checks.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="why-card text-center">
+                        <div class="why-icon">⚡</div>
+                        <h5 class="fw-bold">Fast & Easy Search</h5>
+                        <p>Find the right expert in seconds using our smart filtering system.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="why-card text-center">
+                        <div class="why-icon">🔒</div>
+                        <h5 class="fw-bold">Secure & Reliable</h5>
+                        <p>Your data is protected. All reviews come from real users.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+
+
+    <!-- TOP MASTERS -->
+    <h3 class="text-center fw-bold mb-4">Top Masters</h3>
+
+    <div class="row g-4 mb-5">
+
+        @if (!masters.Any())
+        {
+            <div class="text-center text-muted mb-5">
+                <i>No masters available yet.</i>
+            </div>
+        }
+        else
+        {
+            foreach (var m in masters.Take(3))
+            {
+                <div class="col-md-4">
+                    <div class="master-card">
+
+                        <!-- Avatar -->
+                        @if (!string.IsNullOrEmpty(m.AvatarPath))
+                        {
+                            <img src="@m.AvatarPath" class="master-avatar" />
+                        }
+                        else
+                        {
+
+                               <div class="initials-avatar"> @(m.FirstName?.Substring(0, 1).ToUpper() + m.LastName?.Substring(0, 1).ToUpper()) </div>
+                        }
+
+                        <!-- Name -->
+                        <h5 class="fw-bold">@m.FirstName @m.LastName</h5>
+                        <p class="text-muted">@m.Profession</p>
+
+                        <!-- Rating -->
+                        <div class="rating-stars mb-2">
+                            @if (m.AverageRating > 0)
+                            {
+                                var rating = m.AverageRating;
+                                var percent = rating / 5.0 * 100.0;
+
+                                <a href="/Public/Details/@m.Id" class="rating text-decoration-none">
+                                    <div class="rating-box">
+                                        <span class="stars-empty">★★★★★</span>
+                                        <span class="stars-fill" style="width:@percent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">★★★★★</span>
+                                    </div>
+                                </a>
+
+                                <span class="text-muted">(@rating.ToString("0.0"))</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No rating yet</span>
+                            }
+                        </div>
+
+                        <!-- Short description -->
+                        <p class="text-truncate">@m.Description</p>
+
+                        <!-- Price -->
+                        <div class="master-price">@m.PricePerHour € / hour</div>
+
+                        <!-- Details button -->
+                        <a asp-controller="Public" asp-action="Details" asp-route-id="@m.Id"
+                           class="btn btn-outline-primary w-100 mt-3">
+                            View details
+                        </a>
+
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- PORTFOLIO PREVIEW SECTION -->
+    <section class="mt-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Our Work & Portfolio</h2>
+            <p class="text-muted">
+                A glimpse into the kind of work our trusted professionals can help you with.
+            </p>
+        </div>
+
+        @if (ViewBag.TopPortfolioPhotos == null || ViewBag.TopPortfolioPhotos.Count == 0)
+        {
+            <div class="row g-4 justify-content-center">
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="portfolio-placeholder shadow-sm p-3 text-center rounded">
+                        <i class="bi bi-image fs-1 text-secondary"></i>
+                        <p class="mt-2 text-muted">No portfolio photos yet</p>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4 justify-content-center">
+                @foreach (var p in ViewBag.TopPortfolioPhotos)
+                {
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card shadow-sm">
+                            <img src="@p.PhotoPath"
+                                 class="card-img-top portfolio-photo"
+                                 style="height:230px; object-fit:cover; cursor:pointer;"
+                                 onclick="openLightbox(@ViewBag.TopPortfolioPhotos.IndexOf(p))" />
+
+
+                            <div class="card-body text-start">
+                                <small class="text-muted">@p.UploadedAt.ToString("dd.MM.yyyy")</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+
+
+
+</div>

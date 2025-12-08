@@ -1,0 +1,387 @@
+﻿@model MasterServicePlatform.Web.Models.Master
+
+@{
+    ViewData["Title"] = "Master Profile";
+
+    string GetInitials(string first, string last)
+    {
+        if (string.IsNullOrWhiteSpace(first) || string.IsNullOrWhiteSpace(last))
+            return "?";
+        return $"{first[0]}{last[0]}".ToUpper();
+    }
+}
+
+
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="row">
+
+                <!-- LEFT column -->
+                <div class="col-md-4 text-center">
+
+                    @if (!string.IsNullOrEmpty(Model.AvatarPath))
+                    {
+                        <img src="@Model.AvatarPath" class="avatar-img-large" />
+                    }
+                    else
+                    {
+                        <div class="avatar-large">@GetInitials(Model.FirstName, Model.LastName)</div>
+                    }
+
+                    <h3 class="fw-bold">@Model.FullName</h3>
+                    <h5 class="text-muted">@Model.Profession</h5>
+
+                    <div class="mt-2">
+                        @if (Model.AverageRating > 0)
+                        {
+                            var rating = Model.AverageRating;
+                            var percent = rating / 5.0 * 100.0;
+
+                            <div class="rating-stars mb-2">
+                                <a href="#reviews-section" class="rating text-decoration-none">
+                                    <div class="rating-box">
+                                        <span class="stars-empty">★★★★★</span>
+                                        <span class="stars-fill" style="width:@percent.ToString("0.##")%;">★★★★★</span>
+                                    </div>
+                                </a>
+
+                                <span class="text-muted">(@rating.ToString("0.0"))</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No rating yet</span>
+                        }
+                    </div>
+
+                </div>
+
+                <!-- RIGHT column -->
+                <div class="col-md-8">
+
+                    <div class="d-flex justify-content-end">
+                        <span class="badge bg-primary fs-6 p-2">
+                            @Model.PricePerHour,00 € / hour
+                        </span>
+                    </div>
+
+                    <hr />
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>City:</strong> @Model.City</li>
+                        <li class="list-group-item"><strong>Experience:</strong> @Model.ExperienceYears years</li>
+                        <li class="list-group-item"><strong>Phone:</strong> @Model.Phone</li>
+                        <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
+                    </ul>
+
+                    <hr />
+
+                    <h5>Description</h5>
+                    <p class="mb-3">@Model.Description</p>
+
+                    <hr />
+
+                    <h4 class="mt-4 d-flex justify-content-between align-items-center">
+                        <span>Portfolio</span>
+
+                        @if (Model.PortfolioPhotos != null && Model.PortfolioPhotos.Any())
+                        {
+                            <a asp-controller="Public"
+                               asp-action="Portfolio"
+                               asp-route-id="@Model.Id"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-images"></i> View Full Portfolio
+                            </a>
+                        }
+                    </h4>
+
+                    @if (Model.PortfolioPhotos == null || !Model.PortfolioPhotos.Any())
+                    {
+                        <p class="text-muted">This master has not uploaded any portfolio photos yet.</p>
+                    }
+                    else
+                    {
+                        <div class="row mt-3">
+                            @foreach (var photo in Model.PortfolioPhotos
+                                                    .OrderByDescending(p => p.UploadedAt)
+                                                    .Take(3))
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card shadow-sm">
+                                        <img src="@photo.PhotoPath"
+                                             class="card-img-top portfolio-photo"
+                                             style="cursor:pointer; height:180px; object-fit:cover;" />
+
+                                        <div class="card-body">
+                                            <small class="text-muted">
+                                                @photo.UploadedAt.ToString("dd.MM.yyyy HH:mm")
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="mt-3">
+                        <a href="#add-review" class="btn btn-success">
+                            Add Review
+                        </a>
+
+                        <a asp-controller="Orders"
+                           asp-action="Create"
+                           asp-route-masterId="@Model.Id"
+                           class="btn btn-primary ms-2">
+                            Hire This Master
+                        </a>
+
+                        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Back to List</a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <h4 id="reviews-section" class="mt-4 mb-3">Reviews</h4>
+
+    @if (TempData["ReviewSpamWarning"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["ReviewSpamWarning"]
+        </div>
+    }
+
+    @if (TempData["FakeReviewError"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["FakeReviewError"]
+        </div>
+    }
+
+    @if (TempData["ReviewEditBlocked"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["ReviewEditBlocked"]
+        </div>
+    }
+
+
+
+    @{
+        var currentUserId = User.Identity.IsAuthenticated
+        ? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+        : null;
+    }
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div id="add-review" class="card shadow-sm mb-4 p-3">
+            <h5 class="mb-3">Leave a Review</h5>
+
+            <form asp-controller="Reviews" asp-action="Create" method="post">
+                <input type="hidden" name="MasterId" value="@Model.Id" />
+
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <select name="Rating" class="form-select" required>
+                        <option value="">Select rating...</option>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <textarea name="Comment" rows="3" class="form-control" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">Submit Review</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary">
+            Please log in to leave a review.
+        </div>
+    }
+
+    <!-- REVIEWS LIST -->
+    @if (Model.Reviews != null && Model.Reviews.Any())
+    {
+        foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+        {
+            var isOwner =
+            User.Identity.IsAuthenticated
+            && review.UserId != null
+            && currentUserId == review.UserId;
+
+
+            <div class="review-card mb-3">
+
+                <div class="review-header">
+                    <div class="review-user-info">
+
+                        @if (review.UserId == null && review.IsUserDeleted)
+                        {
+                            <!-- Deleted user -->
+                            <div class="review-avatar-initials">?</div>
+
+                            <div>
+                                <div class="review-username text-muted">
+                                    Deleted user
+                                </div>
+                                <div class="review-date">
+                                    @review.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                            </div>
+                        }
+                        else if (review.User != null)
+                        {
+                            <!-- Ussual user -->
+                            @if (!string.IsNullOrEmpty(review.User.AvatarPath))
+                            {
+                                <img src="@review.User.AvatarPath" class="review-avatar" />
+                            }
+                            else
+                            {
+                                <div class="review-avatar-initials">
+                                    @GetInitials(review.User.FirstName, review.User.LastName)
+                                </div>
+                            }
+
+                            <div>
+                                <div class="review-username">
+                                    @review.User.FirstName @review.User.LastName
+                                </div>
+                                <div class="review-date">
+                                    @review.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Old reviews -->
+                            <div class="review-avatar-initials">?</div>
+
+                            <div>
+                                <div class="review-username text-muted">
+                                    Unknown user
+                                </div>
+                                <div class="review-date">
+                                    @review.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                            </div>
+                        }
+
+
+
+                    </div>
+
+                    @if (isOwner)
+                    {
+                        <div class="review-actions">
+                            <button class="btn btn-light me-1" onclick="showEdit(@review.Id)">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                            <button class="btn btn-light text-danger" onclick="showDelete(@review.Id)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+
+                <div class="review-stars mt-2">
+                    @for (int i = 1; i <= review.Rating; i++)
+                    {
+                        <span style="color:#f5c518;">★</span>
+                    }
+                    @for (int i = review.Rating + 1; i <= 5; i++)
+                    {
+                        <span style="color:#ccc;">★</span>
+                    }
+                </div>
+
+                <div class="review-comment">@review.Comment</div>
+
+                <!-- EDIT FORM -->
+                <div id="review-edit-@review.Id" style="display:none;" class="mt-3">
+                    <form asp-controller="Reviews" asp-action="Edit" method="post">
+                        <input type="hidden" name="Id" value="@review.Id" />
+
+                        <div class="mb-2">
+                            <label>Rating</label>
+                            <select name="Rating" class="form-select">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <option value="@i" selected="@(i == review.Rating)">@i</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Comment</label>
+                            <textarea name="Comment" rows="3" class="form-control">@review.Comment</textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                onclick="cancelEdit(@review.Id)">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+
+                <!-- DELETE CONFIRM -->
+                <div id="review-delete-@review.Id" style="display:none;" class="mt-3">
+                    <p class="text-danger fw-bold mb-2">Delete this review?</p>
+
+                    <form asp-controller="Reviews" asp-action="Delete" method="post">
+                        <input type="hidden" name="Id" value="@review.Id" />
+
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="button" class="btn btn-secondary btn-sm ms-2"
+                                onclick="cancelDelete(@review.Id)">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-secondary">No reviews yet.</div>
+    }
+
+    <script>
+        function showEdit(id) {
+            document.getElementById(`review-edit-${id}`).style.display = "block";
+            document.getElementById(`review-delete-${id}`).style.display = "none";
+        }
+        function cancelEdit(id) {
+            document.getElementById(`review-edit-${id}`).style.display = "none";
+        }
+
+        function showDelete(id) {
+            document.getElementById(`review-delete-${id}`).style.display = "block";
+            document.getElementById(`review-edit-${id}`).style.display = "none";
+        }
+        function cancelDelete(id) {
+            document.getElementById(`review-delete-${id}`).style.display = "none";
+        }
+    </script>
+
+</div>

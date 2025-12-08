@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Add Portfolio Photo";
+}
+
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card shadow border-0">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="bi bi-image me-2"></i> Add Portfolio Photo</h4>
+        </div>
+
+        <div class="card-body">
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+
+            <form asp-action="UploadPhoto" method="post" enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Choose an image</label>
+                    <input type="file" name="file" class="form-control" accept="image/*" required onchange="previewImage(event)" />
+                </div>
+
+                <div class="text-center mb-3">
+                    <img id="preview" src="#" alt="" style="max-width: 100%; display: none; border-radius: 8px;" />
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-upload"></i> Upload
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        var output = document.getElementById('preview');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.style.display = "block";
+    }
+</script>

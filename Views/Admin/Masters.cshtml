@@ -1,0 +1,221 @@
+﻿@model IEnumerable<MasterServicePlatform.Web.Models.ApplicationUser>
+
+@{
+    Layout = "_AdminLayout";
+
+    var violationCounts = ViewBag.ViolationCounts as Dictionary<string, int>;
+
+    string fSearch = ViewBag.Search ?? "";
+    string fStatus = ViewBag.Status ?? "";
+    string fCity = ViewBag.City ?? "";
+    string fSort = ViewBag.Sort ?? "";
+    string fViol = ViewBag.Violations ?? "";
+}
+
+<h2 class="mt-4 mb-3 fw-bold">Masters</h2>
+
+<form method="get" class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <input type="text" name="search" class="form-control"
+               placeholder="Search name or email..." value="@fSearch" />
+    </div>
+
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="">Any status</option>
+            <option value="verified" selected="@(fStatus == "verified")">Verified</option>
+            <option value="pending" selected="@(fStatus == "pending")">Pending</option>
+            <option value="rejected" selected="@(fStatus == "rejected")">Rejected</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="city" class="form-select">
+            <option value="">All cities</option>
+            @foreach (var c in (List<string>)ViewBag.Cities)
+            {
+                <option value="@c" selected="@(c == fCity)">@c</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="violations" class="form-select">
+            <option value="">All</option>
+            <option value="0" selected="@(fViol == "0")">No violations</option>
+            <option value="1" selected="@(fViol == "1")">With violations</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="sort" class="form-select">
+            <option value="">Default</option>
+            <option value="name" selected="@(fSort == "name")">Name</option>
+            <option value="city" selected="@(fSort == "city")">City</option>
+            <option value="status" selected="@(fSort == "status")">Status</option>
+        </select>
+    </div>
+
+    <div class="col-md-2 d-flex gap-2">
+        <button class="btn btn-primary w-100">Filter</button>
+        <a href="/Admin/Masters" class="btn btn-outline-secondary w-100">Reset</a>
+    </div>
+
+</form>
+
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm rounded bg-white" style="min-width: 900px;">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>Status</th>
+                <th>Blocked</th>
+                <th>Violations</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var u in Model)
+            {
+                var vc = violationCounts.ContainsKey(u.Id) ? violationCounts[u.Id] : 0;
+
+                <tr class="click-row" data-href="/Admin/MasterDetails/@u.MasterId" style="cursor:pointer;">
+
+                    <td>@u.FirstName @u.LastName</td>
+                    <td>@u.Email</td>
+                    <td>@u.Master?.City</td>
+
+                    <td>
+                        @switch (u.Master?.VerificationStatus)
+                        {
+                            case VerificationStatus.Verified:
+                                <span class="badge bg-success">Verified</span>
+                                ;
+                                break;
+                            case VerificationStatus.Rejected:
+                                <span class="badge bg-danger">Rejected</span>
+                                ;
+                                break;
+                            default:
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                ;
+                                break;
+                        }
+                    </td>
+
+                    <td>
+                        @if (!u.IsBlocked)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+
+                            <span class="badge bg-danger">Blocked</span>
+                        }
+                    </td>
+
+                    <td>
+                        @vc
+                        @if (vc > 0)
+                        {
+                            <button class="btn btn-sm btn-outline-secondary ms-2 toggle-violations"
+                                    data-user="@u.Id">
+                                🔍
+                            </button>
+                        }
+                    </td>
+
+                    <td class="text-end">
+
+                        @if (u.Master?.VerificationStatus == VerificationStatus.Pending ||
+                                            u.Master?.VerificationStatus == VerificationStatus.Unverified)
+                        {
+                            <form method="post" asp-action="VerifyMaster" asp-route-id="@u.Id" class="d-inline">
+                                <button class="btn btn-success btn-sm me-1">Verify</button>
+                            </form>
+
+                            <form method="post" asp-action="RejectMaster" asp-route-id="@u.Id" class="d-inline">
+                                <button class="btn btn-danger btn-sm me-2">Reject</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-action="ResetMasterStatus" asp-route-id="@u.Id" class="d-inline">
+                                <button class="btn btn-secondary btn-sm me-2">Reset</button>
+                            </form>
+                        }
+
+                        @if (!u.IsBlocked)
+                        {
+                            <a asp-action="BlockMaster"
+                               asp-route-id="@u.Id"
+                               class="btn btn-warning btn-sm">Block</a>
+                        }
+                        else
+                        {
+                            <a asp-action="UnblockMaster"
+                               asp-route-id="@u.Id"
+                               class="btn btn-success btn-sm">Unblock</a>
+                        }
+
+                    </td>
+                </tr>
+
+                <tr id="violations-@u.Id" class="violation-details" style="display:none;">
+                    <td colspan="7">
+                        <div class="p-3 border rounded bg-light">
+                            <div class="loading text-muted">Loading...</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // --- CLICK ON ROW FOR MASTER DETAILS ---
+        document.querySelectorAll(".click-row").forEach(row => {
+            row.addEventListener("click", e => {
+                if (e.target.closest("button") || e.target.closest("a") || e.target.closest("form"))
+                    return;
+
+                window.location = row.dataset.href;
+            });
+        });
+
+        // --- VIOLATIONS TOGGLE ---
+        document.querySelectorAll(".toggle-violations").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.stopPropagation();
+
+                const id = btn.dataset.user;
+                const row = document.getElementById("violations-" + id);
+
+                if (row.style.display === "none") {
+                    row.style.display = "table-row";
+
+                    if (!row.dataset.loaded) {
+                        const res = await fetch(`/Admin/GetUserViolations?id=${id}`);
+                        const html = await res.text();
+
+                        row.querySelector(".loading").innerHTML = html;
+                        row.dataset.loaded = "true";
+                    }
+                }
+                else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+    });
+</script>

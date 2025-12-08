@@ -1,0 +1,104 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Masters</h5>
+                <h3 class="fw-bold">@ViewBag.TotalMasters</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Reviews</h5>
+                <h3 class="fw-bold">@ViewBag.TotalReviews</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Average Rating</h5>
+                <h3 class="fw-bold text-warning">★ @ViewBag.AverageRating.ToString("0.0")</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3">Top Rated Masters</h4>
+
+@if (ViewBag.TopMasters != null && ((List<MasterServicePlatform.Web.Models.Master>)ViewBag.TopMasters).Any())
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var master in (List<MasterServicePlatform.Web.Models.Master>)ViewBag.TopMasters)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@master.FullName</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@master.Profession</h6>
+                        <div class="mb-2">
+                            <span class="badge bg-warning text-dark">
+                                ★ @master.AverageRating.ToString("0.0")
+                            </span>
+                        </div>
+                        <p class="card-text text-truncate">@master.Description</p>
+                        <a asp-controller="Masters" asp-action="Details" asp-route-id="@master.Id" class="btn btn-outline-primary btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-secondary">No reviews yet.</div>
+}
+<hr class="mt-5 mb-3" />
+<h4 class="mb-3">Reviews Activity</h4>
+
+<canvas id="reviewsChart" height="100"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('reviewsChart');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.ReviewsByMonthLabels)),
+                datasets: [{
+                    label: 'Reviews per month',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.ReviewsByMonthData)),
+                    borderWidth: 2,
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0,123,255,0.2)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#007bff'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
+

@@ -1,0 +1,187 @@
+﻿@model MasterServicePlatform.Web.Models.ViewModels.AdminStatsViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h2 class="fw-bold mb-4">Statistics</h2>
+
+<!-- ==== TOP CARDS ==== -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card shadow-sm">
+            <div class="stat-title">Users</div>
+            <div class="stat-number">@Model.UserCount</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card shadow-sm">
+            <div class="stat-title">Masters</div>
+            <div class="stat-number">@Model.MasterCount</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card shadow-sm">
+            <div class="stat-title">Orders</div>
+            <div class="stat-number">@Model.OrderCount</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card shadow-sm">
+            <div class="stat-title">Completed</div>
+            <div class="stat-number">@Model.CompletedCount</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==== CHARTS ==== -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Order Status Distribution</h5>
+                <canvas id="statusChart" style="height:260px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Orders Per Day</h5>
+                <canvas id="ordersByDayChart" style="height:260px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==== TOP MASTERS ==== -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">Top Masters</h5>
+
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Master</th>
+                    <th>Completed</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var m in Model.TopMasters)
+                {
+                    <tr class="click-row" data-href="/Admin/MasterDetails/@m.Id">
+                        <td>@m.Name</td>
+                        <td>@m.Completed</td>
+                        <td>
+                            @m.Rating.ToString("0.0")
+                            <span class="text-warning ms-1">★</span>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ==== RECENT ORDERS ==== -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">Recent Orders</h5>
+
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Master</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var o in Model.RecentOrders)
+                {
+                    <tr class="click-row" data-href="/Admin/OrderDetails/@o.Id">
+                        <td>@o.Id</td>
+                        <td>@o.User</td>
+                        <td>@o.Master</td>
+                        <td>@o.Status</td>
+                        <td>@o.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        /* ================= STATUS PIE CHART ================= */
+        new Chart(document.getElementById('statusChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Pending', 'Accepted', 'Completed'],
+                datasets: [{
+                    data: [
+                        @Model.PendingCount,
+                        @Model.AcceptedCount,
+                        @Model.CompletedChartCount
+                    ],
+                    backgroundColor: ['#0d6efd', '#198754', '#6f42c1'],
+                    hoverOffset: 12
+                }]
+            }
+        });
+
+
+        /* ================= ORDERS PER DAY (LINE) ================= */
+        new Chart(document.getElementById('ordersByDayChart'), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.OrdersByDay.Select(x => x.Day))),
+                datasets: [{
+                    label: 'Orders',
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.OrdersByDay.Select(x => x.Count))),
+                    borderColor: '#0d6efd',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
+            }
+        });
+
+
+        /* ================= CLICKABLE TABLE ROWS ================= */
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".click-row").forEach(row => {
+                row.style.cursor = "pointer";
+                row.addEventListener("click", () => {
+                    window.location = row.dataset.href;
+                });
+            });
+        });
+    </script>
+
+    <style>
+        table.table tr.click-row:hover > td {
+            background-color: #f6f8ff !important;
+            transition: background-color .15s ease-in-out;
+        }
+    </style>
+}
+
+
+

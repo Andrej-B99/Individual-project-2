@@ -1,0 +1,36 @@
+﻿@model MasterServicePlatform.Web.Models.Review
+
+@{
+    ViewData["Title"] = "Add Review";
+}
+
+<h3 class="mb-3">Add a Review</h3>
+
+<form asp-action="AddReview" method="post">
+    <input type="hidden" asp-for="MasterId" />
+
+    <div class="mb-3">
+        <label asp-for="Rating" class="form-label"></label>
+        <select asp-for="Rating" class="form-select" required>
+            <option value="">Select rating</option>
+            @for (int i = 1; i <= 5; i++)
+            {
+                <option value="@i">@i</option>
+            }
+        </select>
+        <span asp-validation-for="Rating" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Comment" class="form-label"></label>
+        <textarea asp-for="Comment" class="form-control" rows="4" required></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+    <a asp-action="Details" asp-route-id="@Model.MasterId" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

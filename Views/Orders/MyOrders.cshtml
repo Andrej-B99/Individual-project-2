@@ -1,0 +1,68 @@
+﻿@model List<MasterServicePlatform.Web.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="card shadow-sm p-4">
+    <h2 class="text-center mb-4">My Orders</h2>
+
+    @if (TempData["OrderSpamWarning"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["OrderSpamWarning"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3">
+            You don’t have any orders yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Master</th>
+                    <th>Description</th>
+                    <th>Address</th>
+                    <th>Budget</th>
+                    <th>Preferred</th>
+                    <th>Category</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Master?.FullName</td>
+                        <td>@order.Description</td>
+                        <td>@order.Address</td>
+                        <td>@order.Budget?.ToString("0.00")</td>
+                        <td>
+                            @order.PreferredDate?.ToString("dd.MM.yyyy")<br />
+                            @order.PreferredTime?.ToString(@"hh\:mm")
+                        </td>
+                        <td>@order.ServiceCategory</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(order.AttachmentPath))
+                            {
+                                <a href="@order.AttachmentPath" target="_blank">View file</a>
+                            }
+                        </td>
+                        <td>@order.Status</td>
+                        <td>@order.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    }
+</div>

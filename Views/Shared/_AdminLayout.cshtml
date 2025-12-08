@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using MasterServicePlatform.Web.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin – @ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+
+            <!-- Logo -->
+            <a class="navbar-brand fw-semibold" asp-controller="Admin" asp-action="Index">
+                Admin Panel
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#adminNav" aria-controls="adminNav"
+                    aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="adminNav">
+
+                <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")"
+                           asp-controller="Admin" asp-action="Index">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Users" ? "active" : "")"
+                           asp-controller="Admin" asp-action="Users">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Masters" ? "active" : "")"
+                           asp-controller="Admin" asp-action="Masters">
+                            <i class="bi bi-hammer"></i> Masters
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")"
+                           asp-controller="Admin" asp-action="Orders">
+                            <i class="bi bi-list-check"></i> Orders
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Stats" ? "active" : "")"
+                           asp-controller="Admin" asp-action="Stats">
+                            <i class="bi bi-graph-up-arrow"></i> Stats
+                        </a>
+                    </li>
+
+                </ul>
+
+                <!-- Logout -->
+                <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-flex">
+                    <button type="submit" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </nav>
+
+
+    <main class="container my-4">
+        @RenderBody()
+    </main>
+
+    <footer class="text-center my-4 text-muted small">
+        © @DateTime.Now.Year — Master Service Platform Admin
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

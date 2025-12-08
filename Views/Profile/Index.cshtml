@@ -1,0 +1,153 @@
+﻿@model MasterServicePlatform.Web.Models.UserProfile
+@using MasterServicePlatform.Web.Models
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-5">
+
+    @if (TempData["ProfileSaved"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Profile updated successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i> My Profile
+                    </h4>
+
+                    <!-- Delete account button -->
+                    <button class="btn btn-danger btn-sm" onclick="openDeletePopup()">
+                        <i class="bi bi-trash"></i> Delete Account
+                    </button>
+                </div>
+
+                <div class="card-body">
+                    @if (Model != null)
+                    {
+                        <!-- Avatar and name -->
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="me-3">
+                                @if (!string.IsNullOrEmpty(Model.User?.AvatarPath))
+                                {
+                                    <img src="@Model.User.AvatarPath"
+                                         alt="Avatar"
+                                         class="rounded-circle"
+                                         style="width:72px;height:72px;object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                         style="width:72px;height:72px;font-size:1.6rem;font-weight:600;">
+                                        @{
+                                            var initials = (Model.FirstName?.FirstOrDefault().ToString()
+                                            + Model.LastName?.FirstOrDefault().ToString()).Trim();
+
+                                            if (string.IsNullOrWhiteSpace(initials))
+                                            {
+                                                initials = (Model.User?.Email ?? "U").Substring(0, 1).ToUpper();
+                                            }
+                                        }
+                                        @initials
+                                    </div>
+                                }
+                            </div>
+                            <div>
+                                <h4 class="mb-1">@Model.FullName</h4>
+                                <div class="text-muted">@((Model.User?.Email) ?? User.Identity?.Name)</div>
+                            </div>
+                        </div>
+
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">City:</dt>
+                            <dd class="col-sm-8">@Model.City</dd>
+
+                            <dt class="col-sm-4">Phone:</dt>
+                            <dd class="col-sm-8">@Model.Phone</dd>
+
+                            <dt class="col-sm-4">Role:</dt>
+                            <dd class="col-sm-8">
+                                @{
+                                    var role = Model.User?.Role.ToString() ?? "User";
+                                    var badgeClass = role switch
+                                    {
+                                        "Admin" => "bg-danger",
+                                        "Master" => "bg-success",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @badgeClass">@role</span>
+                            </dd>
+
+                            @if (Model.User?.Role == UserRole.Master && Model.User?.MasterId != null)
+                            {
+                                <dt class="col-sm-4">Profession:</dt>
+                                <dd class="col-sm-8">@Model.User.Master?.Profession</dd>
+
+                                <dt class="col-sm-4">Experience:</dt>
+                                <dd class="col-sm-8">@Model.User.Master?.ExperienceYears years</dd>
+
+                                <dt class="col-sm-4">Price per hour:</dt>
+                                <dd class="col-sm-8">@Model.User.Master?.PricePerHour €</dd>
+
+                                <dt class="col-sm-4">Verification:</dt>
+                                <dd class="col-sm-8">
+                                    @{
+                                        var status = Model.User.Master?.VerificationStatus ?? VerificationStatus.Pending;
+                                        var color = status switch
+                                        {
+                                            VerificationStatus.Verified => "success",
+                                            VerificationStatus.Pending => "warning",
+                                            VerificationStatus.Rejected => "danger",
+                                            _ => "secondary"
+                                        };
+                                    }
+                                    <span class="badge bg-@color">@status</span>
+                                </dd>
+                            }
+                        </dl>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No profile data available.</p>
+                    }
+
+                    <div class="text-end mt-4">
+                        <a asp-action="Edit" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete account modal -->
+<div id="deletePopup" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h4 class="text-danger mb-3">Delete your account?</h4>
+        <p>This action cannot be undone.</p>
+
+        <form method="post" asp-action="DeleteAccount">
+            <button type="submit" class="btn btn-danger w-100 mb-2">Yes, delete</button>
+            <button type="button" class="btn btn-secondary w-100" onclick="closeDeletePopup()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openDeletePopup() {
+        document.getElementById("deletePopup").style.display = "flex";
+    }
+    function closeDeletePopup() {
+        document.getElementById("deletePopup").style.display = "none";
+    }
+</script>

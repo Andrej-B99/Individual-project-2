@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "How It Works";
+}
+
+<div class="text-center mb-5">
+    <h2 class="fw-bold">How MasterService Works</h2>
+    <p class="text-muted">A simple way for customers and professionals to connect.</p>
+</div>
+
+<div class="container">
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="p-4 bg-white rounded shadow-sm text-center">
+                <i class="bi bi-search fs-1 text-primary"></i>
+                <h5 class="fw-bold mt-3">1. Search for a Master</h5>
+                <p>
+                    Browse or search professionals by name, skill, city or rating.
+                    Our smart filters help you quickly find the right expert.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 bg-white rounded shadow-sm text-center">
+                <i class="bi bi-chat-dots fs-1 text-primary"></i>
+                <h5 class="fw-bold mt-3">2. Contact & Discuss</h5>
+                <p>
+                    View details, check pricing and experience, read reviews,
+                    and contact the master directly to agree on the job.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 bg-white rounded shadow-sm text-center">
+                <i class="bi bi-star fs-1 text-primary"></i>
+                <h5 class="fw-bold mt-3">3. Rate Your Experience</h5>
+                <p>
+                    After the service is completed, you can leave an honest review
+                    to help future customers choose the best professionals.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Public" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="bi bi-search"></i> Find a Master
+        </a>
+    </div>
+</div>

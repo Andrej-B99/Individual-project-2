@@ -1,0 +1,175 @@
+﻿@model MasterServicePlatform.Web.Models.ViewModels.AdminUserDetailsViewModel
+@{
+    Layout = "_AdminLayout";
+    var u = Model.User;
+}
+
+<h2 class="mt-4 mb-3 fw-bold">User Details</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <h4 class="fw-bold mb-3">@u.FirstName @u.LastName</h4>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <strong>Email:</strong> @u.Email
+            </div>
+
+            <div class="col-md-4">
+                <strong>Phone:</strong> @u.Profile?.Phone
+            </div>
+
+            <div class="col-md-4">
+                <strong>City:</strong> @u.Profile?.City
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <strong>Status:</strong>
+                @if (!u.IsBlocked)
+                {
+                    <span class="badge bg-success">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Blocked</span>
+                }
+            </div>
+
+            <div class="col-md-4">
+                <strong>Verified:</strong>
+                @if (u.IsVerified)
+                {
+                    <span class="badge bg-success">Verified</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Not verified</span>
+                }
+            </div>
+        </div>
+
+        <div>
+            @if (!u.IsBlocked)
+            {
+                <a asp-action="BlockUser" asp-route-id="@u.Id"
+                   class="btn btn-warning">Block User</a>
+            }
+            else
+            {
+                <a asp-action="UnblockUser" asp-route-id="@u.Id"
+                   class="btn btn-success">Unblock User</a>
+            }
+        </div>
+
+    </div>
+</div>
+
+<!-- VIOLATIONS -->
+<h4 class="fw-bold mt-4 mb-2">Violations</h4>
+
+@if (Model.Violations.Any())
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <ul class="list-group">
+                @foreach (var v in Model.Violations)
+                {
+                    <li class="list-group-item">
+                        <b>@v.Type</b> — @v.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        <br />
+                        <small class="text-muted">@v.Details</small>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-muted">No violations found.</p>
+}
+
+<!-- ORDERS -->
+<h4 class="fw-bold mt-4 mb-2">Orders</h4>
+
+@if (Model.Orders.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle shadow-sm bg-white rounded" style="min-width: 600px;">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Master</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var o in Model.Orders)
+                {
+                    <tr>
+                        <td>@o.Id</td>
+                        <td>@o.Master?.FirstName @o.Master?.LastName</td>
+                        <td>@o.Status</td>
+                        <td>@o.CreatedAt.ToString("dd.MM.yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="text-muted">No orders found.</p>
+}
+
+<!-- REVIEWS -->
+<h4 class="fw-bold mt-4 mb-2">Reviews by User</h4>
+
+@if (Model.Reviews.Any())
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <ul class="list-group">
+                @foreach (var r in Model.Reviews)
+                {
+                    <li class="list-group-item">
+
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <b>Master:</b>
+                                <a href="/Admin/MasterDetails/@r.MasterId">
+                                    @r.Master?.FirstName @r.Master?.LastName
+                                </a>
+                                <br />
+
+                                <b>Rating:</b> @r.Rating ★
+                                <br />
+
+                                <small class="text-muted">
+                                    @r.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </small>
+
+                                @if (!string.IsNullOrEmpty(r.Comment))
+                                {
+                                    <div class="mt-2">@r.Comment</div>
+                                }
+                            </div>
+                        </div>
+
+                    </li>
+                }
+            </ul>
+
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-muted">User has not written any reviews.</p>
+}

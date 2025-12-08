@@ -1,0 +1,81 @@
+﻿@model IEnumerable<MasterServicePlatform.Web.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders for You";
+}
+
+<h2 class="text-center mb-4">Orders for You</h2>
+
+<div class="card shadow-sm p-4">
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>User</th>
+                    <th>Description</th>
+                    <th>Address</th>
+                    <th>Budget</th>
+                    <th>Preferred</th>
+                    <th>Category</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th style="white-space: nowrap;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var o in Model)
+                {
+                    <tr>
+                        <td>@o.User?.Email</td>
+                        <td>@o.Description</td>
+                        <td>@o.Address</td>
+                        <td>@o.Budget?.ToString("0.00")</td>
+                        <td>
+                            @o.PreferredDate?.ToString("dd.MM.yyyy")<br />
+                            @o.PreferredTime
+                        </td>
+                        <td>@o.ServiceCategory</td>
+
+                        <td>
+                            @if (!string.IsNullOrEmpty(o.AttachmentPath))
+                            {
+                                <a href="@o.AttachmentPath" target="_blank">View file</a>
+                            }
+                        </td>
+
+                        <td>@o.Status</td>
+
+                        <td style="white-space: nowrap;">
+                            <div class="d-flex flex-column gap-1">
+
+                                @if (o.Status == OrderStatus.Pending)
+                                {
+                                    <form method="post" asp-action="Accept">
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <button class="btn btn-success btn-sm w-100">Accept</button>
+                                    </form>
+
+                                    <form method="post" asp-action="Reject">
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <button class="btn btn-danger btn-sm w-100">Reject</button>
+                                    </form>
+                                }
+                                else if (o.Status == OrderStatus.Accepted)
+                                {
+                                    <form method="post" asp-action="Complete">
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <button class="btn btn-primary btn-sm w-100">Complete</button>
+                                    </form>
+                                }
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

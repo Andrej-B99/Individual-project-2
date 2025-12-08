@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<div class="contact-section container py-5">
+
+    <h2 class="fw-bold text-center mb-4">Contact Us</h2>
+    <p class="text-center text-muted mb-5">
+        Have questions? Need help? Want to collaborate?
+        We are always here for you — feel free to reach out!
+    </p>
+
+    <div class="row g-4">
+
+        <!-- CONTACT INFO -->
+        <div class="col-lg-4">
+            <div class="p-4 rounded shadow-sm bg-white h-100">
+                <h5 class="fw-bold mb-3"><i class="bi bi-info-circle"></i> General Info</h5>
+                <p><i class="bi bi-envelope-fill text-primary"></i> support@masterservice.com</p>
+                <p><i class="bi bi-telephone-fill text-primary"></i> +371 123 456 78</p>
+                <p><i class="bi bi-geo-alt-fill text-primary"></i> Riga, Latvia</p>
+            </div>
+        </div>
+
+        <!-- CONTACT FORM -->
+        <div class="col-lg-8">
+            <div class="p-4 rounded shadow-sm bg-white">
+                <h5 class="fw-bold mb-3"><i class="bi bi-chat-dots"></i> Send us a Message</h5>
+
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" class="form-control" placeholder="John Doe">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Your Email</label>
+                            <input type="email" class="form-control" placeholder="you@example.com">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" rows="4" placeholder="How can we help you?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-send-fill"></i> Send
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .contact-section {
+        max-width: 1000px;
+    }
+</style>

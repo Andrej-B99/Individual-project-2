@@ -1,0 +1,185 @@
+﻿@model IEnumerable<MasterServicePlatform.Web.Models.ApplicationUser>
+
+@{
+    Layout = "_AdminLayout";
+
+    var violationCounts = ViewBag.ViolationCounts as Dictionary<string, int>;
+
+    string fSearch = ViewBag.Search ?? "";
+    string fSort = ViewBag.Sort ?? "";
+    string fCity = ViewBag.City ?? "";
+    string fViol = ViewBag.Violations ?? "";
+}
+
+<h2 class="mt-4 mb-3">Users</h2>
+
+<form method="get" class="row g-3 mb-4">
+
+    <!-- SEARCH -->
+    <div class="col-md-3">
+        <input type="text"
+               name="search"
+               class="form-control"
+               placeholder="Search name or email..."
+               value="@fSearch" />
+    </div>
+
+    <!-- CITY -->
+    <div class="col-md-2">
+        <select name="city" class="form-select">
+            <option value="">All cities</option>
+
+            @foreach (var c in (List<string>)ViewBag.Cities)
+            {
+                <option value="@c" selected="@(c == fCity)">
+                    @c
+                </option>
+            }
+        </select>
+    </div>
+
+    <!-- VIOLATIONS -->
+    <div class="col-md-2">
+        <select name="violations" class="form-select">
+            <option value="">All users</option>
+            <option value="0" selected="@(fViol == "0")">No violations</option>
+            <option value="1" selected="@(fViol == "1")">With violations</option>
+        </select>
+    </div>
+
+    <!-- SORT -->
+    <div class="col-md-2">
+        <select name="sort" class="form-select">
+            <option value="">Default sort</option>
+            <option value="name" selected="@(fSort == "name")">Sort by name</option>
+            <option value="email" selected="@(fSort == "email")">Sort by email</option>
+            <option value="violations" selected="@(fSort == "violations")">Sort by violations</option>
+        </select>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="col-md-2 d-flex gap-2">
+        <button class="btn btn-primary w-100">Filter</button>
+
+        <a href="/Admin/Users" class="btn btn-outline-secondary w-100">
+            Reset
+        </a>
+    </div>
+
+</form>
+
+<table class="table table-hover align-middle shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Status</th>
+            <th>Blocked</th>
+            <th>Violations</th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var user in Model)
+        {
+            var vc = violationCounts.ContainsKey(user.Id)
+            ? violationCounts[user.Id]
+            : 0;
+
+            <tr class="click-row" data-id="@user.Id" style="cursor:pointer;">
+                <td>@user.FirstName @user.LastName</td>
+                <td>@user.Email</td>
+                <td>@user.Profile?.City</td>
+
+                <td>
+                    <span class="badge bg-info text-dark">User</span>
+                </td>
+
+                <td>
+                    @if (!user.IsBlocked)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Blocked</span>
+                    }
+                </td>
+
+                <td>
+                    <span>@vc</span>
+                    @if (vc > 0)
+                    {
+                        <button class="btn btn-sm btn-outline-secondary ms-2 toggle-violations"
+                                data-user="@user.Id"
+                                onclick="event.stopPropagation();">
+                            🔍
+                        </button>
+                    }
+                </td>
+
+                <td class="text-end">
+                    @if (!user.IsBlocked)
+                    {
+                        <a asp-action="BlockUser"
+                           asp-route-id="@user.Id"
+                           class="btn btn-warning btn-sm"
+                           onclick="event.stopPropagation();">Block</a>
+                    }
+                    else
+                    {
+                        <a asp-action="UnblockUser"
+                           asp-route-id="@user.Id"
+                           class="btn btn-success btn-sm"
+                           onclick="event.stopPropagation();">Unblock</a>
+                    }
+                </td>
+            </tr>
+
+            <tr id="violations-@user.Id" class="violation-details" style="display:none;">
+                <td colspan="7">
+                    <div class="p-3 border rounded bg-light">
+                        <div class="loading text-muted">Loading...</div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        document.querySelectorAll(".toggle-violations").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const id = btn.dataset.user;
+                const row = document.getElementById("violations-" + id);
+
+                if (row.style.display === "none") {
+                    row.style.display = "table-row";
+
+                    if (!row.dataset.loaded) {
+                        const res = await fetch(`/Admin/GetUserViolations?id=${id}`);
+                        row.querySelector(".loading").innerHTML = await res.text();
+                        row.dataset.loaded = "true";
+                    }
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+    });
+
+
+        document.querySelectorAll(".click-row").forEach(row => {
+        row.addEventListener("click", () => {
+            const id = row.dataset.id;
+            window.location = `/Admin/UserDetails?id=${id}`;
+        });
+    });
+
+</script>

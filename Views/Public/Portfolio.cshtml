@@ -1,0 +1,45 @@
+﻿@model MasterServicePlatform.Web.Models.Master
+
+@{
+    ViewData["Title"] = "Portfolio";
+}
+
+<div class="container mt-4">
+
+    <h3 class="mb-3 d-flex justify-content-between align-items-center">
+        <span>Portfolio of @Model.FullName</span>
+
+        <a asp-action="Details"
+           asp-route-id="@Model.Id"
+           class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Back to Profile
+        </a>
+    </h3>
+
+    @if (Model.PortfolioPhotos == null || !Model.PortfolioPhotos.Any())
+    {
+        <div class="alert alert-info">This master has no portfolio photos.</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var photo in Model.PortfolioPhotos.OrderByDescending(p => p.UploadedAt))
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        <img src="@photo.PhotoPath"
+                             class="card-img-top portfolio-photo"
+                             style="height:200px; object-fit:cover; cursor:pointer;" />
+
+
+                        <div class="card-body">
+                            <small class="text-muted">
+                                @photo.UploadedAt.ToString("dd.MM.yyyy HH:mm")
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
