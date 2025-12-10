@@ -1,3 +1,4 @@
+using MasterServicePlatform.Web.Hubs;
 using MasterServicePlatform.Web.Infrastructure;
 using MasterServicePlatform.Web.Models;
 using MasterServicePlatform.Web.Services;
@@ -29,6 +30,10 @@ builder.Services
 
 // MVC
 builder.Services.AddControllersWithViews();
+
+// Add signalr
+builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -62,6 +67,7 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.MapHub<ChatHub>("/chatHub");
 
 // Role initialization
 await IdentityDataSeeder.SeedAsync(app.Services);

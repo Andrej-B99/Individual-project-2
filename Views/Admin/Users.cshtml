@@ -121,6 +121,14 @@
                 </td>
 
                 <td class="text-end">
+
+                    <!-- Chat button -->
+                    <a href="/Chat/Conversation?userId=@user.Id"
+                       class="btn btn-sm btn-primary me-2"
+                       onclick="event.stopPropagation();">
+                        <i class="bi bi-chat-dots"></i>
+                    </a>
+
                     @if (!user.IsBlocked)
                     {
                         <a asp-action="BlockUser"
@@ -135,7 +143,9 @@
                            class="btn btn-success btn-sm"
                            onclick="event.stopPropagation();">Unblock</a>
                     }
+
                 </td>
+
             </tr>
 
             <tr id="violations-@user.Id" class="violation-details" style="display:none;">

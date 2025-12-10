@@ -59,15 +59,15 @@ wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
 wwwroot\uploads\master-avatars\b5cf7d3b-4257-4e32-aa3c-0bdc543475c8.png
+wwwroot\uploads\orders\17d08cca-0f71-43f6-b194-9e821e354b02_Без имени.png
 wwwroot\uploads\orders\1ea8ff2c-2363-4cf4-a25c-c8e54bd914e5_ремонт3.jpg
 wwwroot\uploads\orders\20eefe25-2357-45bf-82e2-c02e7488ff11_smiling-young-man-illustration_1308-174669.avif
+wwwroot\uploads\orders\55cb66b0-7793-4014-85cd-33f9c1fbe7ed_ремонт3.jpg
+wwwroot\uploads\orders\7e85b956-1802-4b75-9ce1-6243a85ec999_пемонт2.jpg
+wwwroot\uploads\orders\907063dd-a228-44b1-a221-2b507e2f6f88_ремонт3.jpg
+wwwroot\uploads\orders\91972345-2bbf-4870-80f8-edb7ce8b9760_ремонт.jpg
+wwwroot\uploads\orders\a187e248-09d5-4db5-b152-bd1da1d3a86d_пемонт2.jpg
+wwwroot\uploads\orders\a391e269-672c-41e4-907a-9d02430b09c9_ремонт.jpg
+wwwroot\uploads\orders\a59103f4-f9d6-4d05-af22-4bf096d30de7_ремонт3.jpg
 wwwroot\uploads\portfolio\39e3edf4-761c-4da2-aae9-00aac7776c15.jpg
 wwwroot\uploads\portfolio\b564bf3f-98cb-49dd-bb7b-b95a1952bb06.jpg
-wwwroot\uploads\orders\7e85b956-1802-4b75-9ce1-6243a85ec999_пемонт2.jpg
-wwwroot\uploads\orders\a187e248-09d5-4db5-b152-bd1da1d3a86d_пемонт2.jpg
-wwwroot\uploads\orders\91972345-2bbf-4870-80f8-edb7ce8b9760_ремонт.jpg
-wwwroot\uploads\orders\a391e269-672c-41e4-907a-9d02430b09c9_ремонт.jpg
-wwwroot\uploads\orders\55cb66b0-7793-4014-85cd-33f9c1fbe7ed_ремонт3.jpg
-wwwroot\uploads\orders\a59103f4-f9d6-4d05-af22-4bf096d30de7_ремонт3.jpg
-wwwroot\uploads\orders\907063dd-a228-44b1-a221-2b507e2f6f88_ремонт3.jpg
-wwwroot\uploads\orders\17d08cca-0f71-43f6-b194-9e821e354b02_Без имени.png

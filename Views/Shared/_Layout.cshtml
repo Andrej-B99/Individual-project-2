@@ -17,8 +17,16 @@
 
     <link rel="stylesheet" href="~/css/site.css" />
 
-
-   
+    <style>
+        .support-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0d6efd; /* bootstrap primary */
+            margin-left: 6px;
+        }
+    </style>
 </head>
 
 <body>
@@ -56,20 +64,17 @@
                         </a>
                     </li>
 
-
                     <li class="nav-item">
                         <a class="nav-link text-light" asp-controller="HowItWorks" asp-action="Index">
                             <i class="bi bi-lightbulb"></i> How it Works
                         </a>
                     </li>
 
-
                     <li class="nav-item">
                         <a class="nav-link text-light" asp-controller="Contact" asp-action="Index">
                             <i class="bi bi-envelope"></i> Contact
                         </a>
                     </li>
-
 
                     @* Dashboard — for Admin *@
                     @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
@@ -109,7 +114,6 @@
 
                             if (string.IsNullOrWhiteSpace(initials))
                                 initials = currentUser.Email.Substring(0, 1).ToUpper();
-
 
                             <div class="dropdown">
                                 <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
@@ -164,6 +168,20 @@
                                                 <i class="bi bi-list-check me-2"></i> My Orders
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Chat" asp-action="Conversation">
+                                                <i class="bi bi-chat-dots me-2"></i> Messages
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Chat"
+                                               asp-action="Conversation"
+                                               asp-route-userId="support">
+                                                <i class="bi bi-life-preserver me-2"></i> Support Chat
+                                                <span id="supportDotDropdownUser" class="support-dot" style="display:none;"></span>
+                                            </a>
+                                        </li>
                                     }
                                     else if (currentUser.Role == UserRole.Master)
                                     {
@@ -175,6 +193,23 @@
                                         <li>
                                             <a class="dropdown-item" asp-controller="Orders" asp-action="ForMaster">
                                                 <i class="bi bi-briefcase me-2"></i> Orders for Me
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Chat"
+                                               asp-action="Conversation"
+                                               asp-route-userId="@currentUser.Id">
+                                                <i class="bi bi-chat-dots me-2"></i> Messages
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Chat"
+                                               asp-action="Conversation"
+                                               asp-route-userId="support">
+                                                <i class="bi bi-life-preserver me-2"></i> Support Chat
+                                                <span id="supportDotDropdownMaster" class="support-dot" style="display:none;"></span>
                                             </a>
                                         </li>
                                     }
@@ -230,7 +265,13 @@
 
     <!-- FOOTER -->
     <footer class="bg-light text-center py-3 border-top">
-        <small class="text-muted">© @DateTime.Now.Year — Master Service Platform</small>
+        <small class="text-muted">
+            © @DateTime.Now.Year — Master Service Platform ·
+            <a asp-controller="Chat" asp-action="Conversation" asp-route-userId="support">
+                Support
+                <span id="supportDotFooter" class="support-dot" style="display:none; vertical-align:middle;"></span>
+            </a>
+        </small>
     </footer>
 
     <!-- Bootstrap JS -->
@@ -260,7 +301,6 @@
             &#10095;
         </span>
     </div>
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -304,6 +344,29 @@
                 showPhoto();
             }
         });
+
+                async function checkSupportDot() {
+            try {
+                let response = await fetch("/Chat/HasUnreadSupportMessages");
+                let hasUnread = await response.json();
+
+                let ids = [
+                    "supportDotDropdownUser",
+                    "supportDotDropdownMaster",
+                    "supportDotFooter"
+                ];
+
+                ids.forEach(id => {
+                    let el = document.getElementById(id);
+                    if (el)
+                        el.style.display = hasUnread ? "inline-block" : "none";
+                });
+            }
+            catch { }
+        }
+
+        setInterval(checkSupportDot, 4000);
+        checkSupportDot();
     </script>
 
 </body>

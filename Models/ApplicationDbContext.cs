@@ -18,6 +18,9 @@ namespace MasterServicePlatform.Web.Models
 
         public DbSet<UserViolation> UserViolations { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,13 +45,27 @@ namespace MasterServicePlatform.Web.Models
             // ApplicationUser <-> Master (1:1)
             builder.Entity<ApplicationUser>()
                 .HasOne(u => u.Master)
-                .WithOne()
+                .WithOne(m => m.User)
                 .HasForeignKey<ApplicationUser>(u => u.MasterId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.Entity<Order>()
                 .Property(o => o.Budget)
                 .HasPrecision(18, 2);
+
+            builder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            builder.Entity<Message>()
+                .HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
 
         }
     }

@@ -283,3 +283,4 @@ C:\Users\andre\source\repos\MasterServicePlatform.Web\MasterServicePlatform.Web\
 C:\Users\andre\source\repos\MasterServicePlatform.Web\MasterServicePlatform.Web\obj\Debug\net8.0\MasterServicePlatform.Web.pdb
 C:\Users\andre\source\repos\MasterServicePlatform.Web\MasterServicePlatform.Web\obj\Debug\net8.0\MasterServicePlatform.Web.genruntimeconfig.cache
 C:\Users\andre\source\repos\MasterServicePlatform.Web\MasterServicePlatform.Web\obj\Debug\net8.0\ref\MasterServicePlatform.Web.dll
+C:\Users\andre\source\repos\MasterServicePlatform.Web\MasterServicePlatform.Web\obj\Debug\net8.0\MasterServicePlatform.Web.sourcelink.json

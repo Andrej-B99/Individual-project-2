@@ -138,6 +138,18 @@
                            class="btn btn-primary ms-2">
                             Hire This Master
                         </a>
+                        @if (Model.User != null)
+                        {
+                            <a asp-controller="Chat"
+                               asp-action="Conversation"
+                               asp-route-userId="@Model.User.Id"
+                               class="btn btn-info ms-2">
+                                Chat with Master
+                            </a>
+                        }
+
+
+
 
                         <a asp-action="Index" class="btn btn-outline-secondary ms-2">Back to List</a>
                     </div>

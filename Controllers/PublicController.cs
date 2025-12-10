@@ -129,11 +129,11 @@ namespace MasterServicePlatform.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var master = await _context.Masters
+                .Include(m => m.User)
                 .Include(m => m.Reviews)
-                .ThenInclude(r => r.User)
+                    .ThenInclude(r => r.User)
                 .Include(m => m.PortfolioPhotos)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
 
             if (master == null)
                 return NotFound();
